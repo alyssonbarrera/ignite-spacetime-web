@@ -6,3 +6,17 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
+
+div {
+  -webkit-font-smoothing: antialiased;
+}
+
+div::-webkit-scrollbar {
+  background-color: #121215;
+  width: 10px;
+  
+}
+
+div::-webkit-scrollbar-thumb {
+  background-color: #09090A;
+}
