@@ -1,12 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
+'use client'
 import dayjs from 'dayjs'
 import Link from 'next/link'
 import { api } from '@lib/api'
-import { cookies } from 'next/headers'
 import ptBr from 'dayjs/locale/pt-br'
 import { ArrowRight } from 'lucide-react'
 
 import { EmptyMemories } from '@components/EmptyMemories'
+import { useEffect, useState } from 'react'
+import Cookies from 'js-cookie'
 
 dayjs.locale(ptBr)
 
@@ -17,21 +19,28 @@ type Memory = {
   createdAt: string
 }
 
-export default async function Home() {
-  const isAuthenticated = cookies().has('token')
-  const token = cookies().get('token')?.value
+export default function Home() {
+  const isAuthenticated = !!Cookies.get('token')
+  const token = Cookies.get('token')
+  const [memories, setMemories] = useState<Memory[]>([])
+
+  async function handleGetMemories() {
+    const response = await api.get('/memories', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    setMemories(response.data.memories)
+  }
+
+  useEffect(() => {
+    handleGetMemories()
+  }, [])
 
   if (!isAuthenticated) {
     return <EmptyMemories />
   }
-
-  const response = await api.get('/memories', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-
-  const memories: Memory[] = response.data.memories
 
   if (memories.length === 0) {
     return <EmptyMemories />

@@ -1,6 +1,8 @@
 import './globals.css'
-import { cookies } from 'next/headers'
+import 'react-toastify/dist/ReactToastify.css'
+
 import { ReactNode } from 'react'
+import { cookies } from 'next/headers'
 import {
   Roboto_Flex as Roboto,
   Bai_Jamjuree as BaiJamjuree,
@@ -9,6 +11,7 @@ import {
 import { Hero } from '@components/Hero'
 import { Header } from '@components/Header'
 import { Copyright } from '@components/Copyright'
+import { ToastContainer } from 'react-toastify'
 
 const roboto = Roboto({ subsets: ['latin'], variable: '--font-roboto' })
 const baiJamjuree = BaiJamjuree({
@@ -43,8 +46,20 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <Copyright />
           </div>
           {/* Right */}
-          <div className="flex max-h-screen flex-col overflow-y-scroll bg-[url(../assets/bg-stars.svg)] bg-cover ">
+          <div className="flex max-h-screen min-h-screen flex-col overflow-y-scroll bg-[url(../assets/bg-stars.svg)] bg-cover ">
             {children}
+            <ToastContainer
+              position="top-right"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="dark"
+            />
           </div>
         </main>
       </body>
