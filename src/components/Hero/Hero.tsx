@@ -1,10 +1,29 @@
-import Link from 'next/link'
+'use client'
 import Image from 'next/image'
 
+import Cookies from 'js-cookie'
+import { renderToast } from '@utils/toast'
+import { Button } from '@components/Button'
+import { useRouter } from 'next/navigation'
+import { ToastContainer } from 'react-toastify'
 import nlwLogoWeb from '@assets/nlw-spacetime-logo-web.svg'
 import nlwLogoMobile from '@assets/nlw-spacetime-logo-mobile.svg'
 
 export function Hero() {
+  const router = useRouter()
+  const isAuthenticated = Cookies.get('token')
+
+  function handleCreateMemory() {
+    if (!isAuthenticated) {
+      return renderToast({
+        message: 'Você precisa estar logado para cadastrar uma lembrança!',
+        type: 'error',
+      })
+    }
+
+    return router.push('/memories/new')
+  }
+
   return (
     <div className="mx-auto flex flex-col items-center space-y-5 md:mx-0 md:items-start">
       <div className="hidden md:block">
@@ -23,12 +42,23 @@ export function Hero() {
           com o mundo!
         </p>
       </div>
-      <Link
-        href="/memories/new"
-        className="inline-block rounded-full bg-green-500 px-5 py-3 font-alt text-sm uppercase leading-none text-black hover:bg-green-600"
-      >
+
+      <Button variant="tertiary" onClick={handleCreateMemory}>
         CADASTRAR LEMBRANÇA
-      </Link>
+      </Button>
+
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </div>
   )
 }

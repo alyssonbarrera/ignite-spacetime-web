@@ -3,12 +3,14 @@
 import dayjs from 'dayjs'
 import Link from 'next/link'
 import { api } from '@lib/api'
+import Cookies from 'js-cookie'
 import ptBr from 'dayjs/locale/pt-br'
 import { ArrowRight } from 'lucide-react'
-
-import { EmptyMemories } from '@components/EmptyMemories'
 import { useEffect, useState } from 'react'
-import Cookies from 'js-cookie'
+
+import { renderToast } from '@utils/toast'
+import { BeatLoader } from 'react-spinners'
+import { EmptyMemories } from '@components/EmptyMemories'
 
 dayjs.locale(ptBr)
 
@@ -20,18 +22,29 @@ type Memory = {
 }
 
 export default function Home() {
-  const isAuthenticated = !!Cookies.get('token')
   const token = Cookies.get('token')
+  const isAuthenticated = !!token
   const [memories, setMemories] = useState<Memory[]>([])
+  const [isFetching, setIsFetching] = useState(false)
 
   async function handleGetMemories() {
-    const response = await api.get('/memories', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
+    setIsFetching(true)
+    try {
+      const response = await api.get('/memories', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
 
-    setMemories(response.data.memories)
+      setMemories(response.data.memories)
+    } catch (error) {
+      renderToast({
+        type: 'error',
+        message: 'Ocorreu um erro ao buscar suas memórias.',
+      })
+    } finally {
+      setIsFetching(false)
+    }
   }
 
   useEffect(() => {
@@ -40,11 +53,24 @@ export default function Home() {
     }
   }, [])
 
-  if (!isAuthenticated) {
-    return <EmptyMemories />
+  if (isFetching) {
+    return (
+      <div className="flex-1">
+        <BeatLoader
+          size={10}
+          color="#8257e5"
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+          }}
+        />
+      </div>
+    )
   }
 
-  if (memories.length === 0) {
+  if (!isAuthenticated || memories.length === 0) {
     return <EmptyMemories />
   }
 

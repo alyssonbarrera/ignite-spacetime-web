@@ -54,6 +54,10 @@ export default function Memory({ params }: MemoryProps) {
 
       setMemory(response.data.memory)
     } catch (error) {
+      renderToast({
+        type: 'error',
+        message: 'Ocorreu um erro ao buscar a memória.',
+      })
     } finally {
       setIsFetching(false)
     }
@@ -116,7 +120,7 @@ export default function Memory({ params }: MemoryProps) {
   }
 
   return (
-    <div className="flex max-w-[1200px] flex-1 flex-col justify-between space-y-4 p-8">
+    <div className="flex max-w-[1200px] flex-1 flex-col space-y-4 p-8">
       <div className="space-y-4">
         <Link
           href="/"
@@ -150,9 +154,9 @@ export default function Memory({ params }: MemoryProps) {
           )}
         </div>
 
-        <text className="whitespace-pre-wrap text-lg leading-relaxed text-gray-100">
+        <p className="whitespace-pre-wrap text-lg leading-relaxed text-gray-100">
           {memory?.content}
-        </text>
+        </p>
       </div>
       <div className="flex gap-4 self-end">
         <Button onClick={() => setIsEditing(true)}>Editar</Button>

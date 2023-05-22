@@ -4,8 +4,14 @@ import { BeatLoader } from 'react-spinners'
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   children: React.ReactNode
-  variant?: 'primary' | 'secondary'
+  variant?: 'primary' | 'secondary' | 'tertiary'
   isLoading?: boolean
+}
+
+const variants = {
+  primary: 'bg-green-500 hover:bg-green-600 font-alt',
+  secondary: 'bg-red-500 text-gray-50 hover:bg-red-600 font-alt',
+  tertiary: 'bg-green-500 hover:bg-green-600',
 }
 
 export function Button({
@@ -17,11 +23,9 @@ export function Button({
   return (
     <button
       className={classNames(
-        'flex min-w-[100px] justify-center self-end rounded-full px-5 py-3 font-alt text-sm uppercase leading-none text-black',
+        'flex min-w-[100px] justify-center rounded-full px-5 py-3 text-sm font-bold uppercase leading-none text-black',
         isLoading && 'pointer-events-none opacity-80',
-        variant === 'primary'
-          ? 'bg-green-500 hover:bg-green-600'
-          : 'bg-red-500 text-gray-50 hover:bg-red-600',
+        variants[variant],
       )}
       {...rest}
     >

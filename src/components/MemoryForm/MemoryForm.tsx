@@ -1,15 +1,15 @@
 'use client'
 
-import Cookie from 'js-cookie'
 import { Camera } from 'lucide-react'
 import { FormEvent, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ToastContainer } from 'react-toastify'
 
-import { api } from '@lib/api'
 import { upload } from '@utils/upload'
 import { renderToast } from '@utils/toast'
 import { Button } from '@components/Button'
+import { editMemory } from '@utils/editMemory'
+import { createMemory } from '@utils/createMemory'
 import { MediaPicker } from '@components/MediaPicker'
 
 type MemoryFormProps = {
@@ -33,11 +33,9 @@ export function MemoryForm({ type, data }: MemoryFormProps) {
     event.preventDefault()
     setIsSubmitting(true)
 
-    const token = Cookie.get('token')
-
     const formData = new FormData(event.currentTarget)
-    const isPublic = formData.get('isPublic')
-    const content = formData.get('content')
+    const isPublic = formData.get('isPublic') as string
+    const content = formData.get('content') as string
 
     if (file && file.size > 50000000) {
       setIsSubmitting(false)
@@ -47,60 +45,58 @@ export function MemoryForm({ type, data }: MemoryFormProps) {
       })
     }
 
-    if (type === 'create') {
-      if (file && content) {
+    if (type === 'create' && file && content) {
+      try {
+        let coverUrl: string
         try {
-          const { coverUrl } = await upload(file)
+          const uploadResponse = await upload(file)
 
-          await api.post(
-            '/memories',
-            {
-              coverUrl,
-              content,
-              isPublic,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            },
-          )
-
-          router.push('/')
+          coverUrl = uploadResponse.coverUrl
         } catch (error) {
-          renderToast({
-            message: 'Ocorreu um erro ao criar a memória!',
+          return renderToast({
+            message: 'Ocorreu um erro ao fazer upload da mídia!',
             type: 'error',
           })
-        } finally {
-          setIsSubmitting(false)
         }
-      } else {
-        setIsSubmitting(false)
-        return renderToast({
-          message: 'É necessário adicionar uma mídia e um conteúdo!',
+
+        await createMemory({
+          content,
+          coverUrl,
+          isPublic,
+        })
+
+        router.push('/')
+      } catch (error) {
+        renderToast({
+          message: 'Ocorreu um erro ao criar a memória!',
           type: 'error',
         })
+      } finally {
+        setIsSubmitting(false)
       }
+    } else if (type === 'create' && (!file || !content)) {
+      setIsSubmitting(false)
+      return renderToast({
+        message: 'É necessário adicionar uma mídia e um conteúdo!',
+        type: 'error',
+      })
     }
 
     if (type === 'edit') {
       try {
-        const { coverUrl } = file ? await upload(file) : { coverUrl: undefined }
+        let coverUrl: string | undefined
+        try {
+          coverUrl = file
+            ? (await upload(file)).coverUrl
+            : { coverUrl: undefined }
+        } catch (error) {}
 
-        await api.put(
-          `/memories/${data?.id}`,
-          {
-            coverUrl,
-            content,
-            isPublic,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        )
+        await editMemory({
+          id: data!.id,
+          content,
+          coverUrl,
+          isPublic,
+        })
 
         router.push('/')
       } catch (error) {
@@ -164,9 +160,11 @@ export function MemoryForm({ type, data }: MemoryFormProps) {
         theme="dark"
       />
 
-      <Button type="submit" isLoading={isSubmitting}>
-        {type === 'create' ? 'Salvar' : 'Salvar alterações'}
-      </Button>
+      <div className="flex justify-end">
+        <Button type="submit" isLoading={isSubmitting}>
+          {type === 'create' ? 'Salvar' : 'Salvar alterações'}
+        </Button>
+      </div>
     </form>
   )
 }
