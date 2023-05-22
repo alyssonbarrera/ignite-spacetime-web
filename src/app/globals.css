@@ -14,7 +14,10 @@ div {
 div::-webkit-scrollbar {
   background-color: #121215;
   width: 10px;
-  
+}
+
+textarea::-webkit-scrollbar {
+  background-color: transparent;
 }
 
 div::-webkit-scrollbar-thumb {

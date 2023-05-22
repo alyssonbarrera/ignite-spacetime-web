@@ -35,7 +35,9 @@ export default function Home() {
   }
 
   useEffect(() => {
-    handleGetMemories()
+    if (isAuthenticated) {
+      handleGetMemories()
+    }
   }, [])
 
   if (!isAuthenticated) {

@@ -116,7 +116,7 @@ export default function Memory({ params }: MemoryProps) {
   }
 
   return (
-    <div className="flex max-w-[1200px] flex-1 flex-col justify-between gap-2 p-8">
+    <div className="flex max-w-[1200px] flex-1 flex-col justify-between space-y-4 p-8">
       <div className="space-y-4">
         <Link
           href="/"
@@ -131,24 +131,28 @@ export default function Memory({ params }: MemoryProps) {
             {memory?.isPublic ? 'Memória pública' : 'Memória privada'}
           </span>
         </div>
-        {memory?.coverUrl.split('.').pop() === 'mp4' ? (
-          <video
-            className="aspect-video w-full rounded-lg object-cover"
-            controls
-          >
-            <source src={memory?.coverUrl} type="video/mp4" />
-          </video>
-        ) : (
-          <img
-            src={memory?.coverUrl}
-            alt="Memory cover"
-            className="rounded-lg object-cover"
-          />
-        )}
+      </div>
+      <div className="flex flex-col space-y-4">
+        <div>
+          {memory?.coverUrl.split('.').pop() === 'mp4' ? (
+            <video
+              className="aspect-video w-full rounded-lg object-cover"
+              controls
+            >
+              <source src={memory?.coverUrl} type="video/mp4" />
+            </video>
+          ) : (
+            <img
+              src={memory?.coverUrl}
+              alt="Memory cover"
+              className="rounded-lg object-cover"
+            />
+          )}
+        </div>
 
-        <p className="text-lg leading-relaxed text-gray-100">
+        <text className="whitespace-pre-wrap text-lg leading-relaxed text-gray-100">
           {memory?.content}
-        </p>
+        </text>
       </div>
       <div className="flex gap-4 self-end">
         <Button onClick={() => setIsEditing(true)}>Editar</Button>
