@@ -10,9 +10,11 @@ import { useRouter } from 'next/navigation'
 import { ChevronLeft, FileKey, X } from 'lucide-react'
 
 import { api } from '@lib/api'
-import { renderToast } from '@utils/toast'
 import { Button } from '@components/Button'
 import { MemoryForm } from '@components/MemoryForm'
+
+import { renderToast } from '@utils/toast'
+import { AppError } from '@utils/errors/AppError'
 
 type MemoryProps = {
   params: {
@@ -33,8 +35,8 @@ type MemoryResponseProps = {
 
 export default function Memory({ params }: MemoryProps) {
   const { id } = params
-  const token = Cookie.get('token')
   const router = useRouter()
+  const token = Cookie.get('token')
 
   const [memory, setMemory] = useState<MemoryResponseProps['memory'] | null>(
     null,
@@ -54,9 +56,14 @@ export default function Memory({ params }: MemoryProps) {
 
       setMemory(response.data.memory)
     } catch (error) {
+      const isAppError = error instanceof AppError
+      const errorMessage = isAppError
+        ? error.message
+        : 'Ocorreu um erro ao buscar a memória.'
+
       renderToast({
         type: 'error',
-        message: 'Ocorreu um erro ao buscar a memória.',
+        message: errorMessage,
       })
     } finally {
       setIsFetching(false)
@@ -66,23 +73,6 @@ export default function Memory({ params }: MemoryProps) {
   useEffect(() => {
     handleGetMemory()
   }, [])
-
-  if (isFetching) {
-    return (
-      <div className="flex-1">
-        <BeatLoader
-          size={10}
-          color="#8257e5"
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100%',
-          }}
-        />
-      </div>
-    )
-  }
 
   if (isEditing) {
     return (
@@ -110,64 +100,88 @@ export default function Memory({ params }: MemoryProps) {
 
       router.push('/')
     } catch (error) {
+      const isAppError = error instanceof AppError
+      const errorMessage = isAppError
+        ? error.message
+        : 'Ocorreu um erro ao excluir a memória.'
+
       renderToast({
         type: 'error',
-        message: 'Não foi possível excluir a memória',
+        message: errorMessage,
       })
     } finally {
       setIsDeleting(false)
     }
   }
 
-  return (
-    <div className="flex max-w-[1200px] flex-1 flex-col space-y-4 p-8">
-      <div className="space-y-4">
-        <Link
-          href="/"
-          className="flex items-center gap-1 text-sm text-gray-200 hover:text-gray-100"
-        >
-          <ChevronLeft className="h-4 w-4 " />
-          voltar à home
-        </Link>
-        <div>
-          <span className="flex cursor-pointer items-center gap-1.5 text-sm text-gray-200 hover:text-gray-100">
-            <FileKey className="h-4 w-4" />
-            {memory?.isPublic ? 'Memória pública' : 'Memória privada'}
-          </span>
-        </div>
+  if (isFetching && !memory) {
+    return (
+      <div className="flex-1">
+        <BeatLoader
+          size={10}
+          color="#8257e5"
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+          }}
+        />
       </div>
-      <div className="flex flex-col space-y-4">
-        <div>
-          {memory?.coverUrl.split('.').pop() === 'mp4' ? (
-            <video
-              className="aspect-video w-full rounded-lg object-cover"
-              controls
-            >
-              <source src={memory?.coverUrl} type="video/mp4" />
-            </video>
-          ) : (
-            <img
-              src={memory?.coverUrl}
-              alt="Memory cover"
-              className="rounded-lg object-cover"
-            />
-          )}
-        </div>
+    )
+  }
 
-        <p className="whitespace-pre-wrap text-lg leading-relaxed text-gray-100">
-          {memory?.content}
-        </p>
+  if (memory) {
+    return (
+      <div className="flex max-w-[1200px] flex-1 flex-col space-y-4 p-8">
+        <div className="space-y-4">
+          <Link
+            href="/"
+            className="flex items-center gap-1 text-sm text-gray-200 hover:text-gray-100"
+          >
+            <ChevronLeft className="h-4 w-4 " />
+            voltar à home
+          </Link>
+          <div>
+            <span className="flex cursor-pointer items-center gap-1.5 text-sm text-gray-200 hover:text-gray-100">
+              <FileKey className="h-4 w-4" />
+              {memory?.isPublic ? 'Memória pública' : 'Memória privada'}
+            </span>
+          </div>
+        </div>
+        <div className="flex flex-col space-y-4">
+          <div>
+            {memory?.coverUrl.split('.').pop() === 'mp4' ? (
+              <video
+                className="aspect-video w-full rounded-lg object-cover"
+                controls
+              >
+                <source src={memory?.coverUrl} type="video/mp4" />
+              </video>
+            ) : (
+              <img
+                src={memory?.coverUrl}
+                alt="Memory cover"
+                className="rounded-lg object-cover"
+              />
+            )}
+          </div>
+
+          <p className="whitespace-pre-wrap text-lg leading-relaxed text-gray-100">
+            {memory?.content}
+          </p>
+        </div>
+        <div className="flex gap-4 self-end">
+          <Button onClick={() => setIsEditing(true)}>Editar</Button>
+          <Button
+            isLoading={isDeleting}
+            variant="secondary"
+            onClick={handleDeleteMemory}
+          >
+            Excluir
+          </Button>
+        </div>
       </div>
-      <div className="flex gap-4 self-end">
-        <Button onClick={() => setIsEditing(true)}>Editar</Button>
-        <Button
-          isLoading={isDeleting}
-          variant="secondary"
-          onClick={handleDeleteMemory}
-        >
-          Excluir
-        </Button>
-      </div>
-    </div>
-  )
+    )
+  }
 }

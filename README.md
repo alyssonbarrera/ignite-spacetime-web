@@ -24,6 +24,10 @@ The application was developed in React, using TypeScript, TailwindCSS, Next.js, 
     </div>
 </div>
 
+# Video
+
+https://github.com/alyssonbarrera/ignite-spacetime-web/assets/86618257/8546ac4b-8711-4d52-8213-7ac9fc42250f
+
 ## Stack
 
 <img width="30px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"/> <img width="30px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg"/> <img width="30px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-plain.svg"/> <img width="30px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-line.svg"/>

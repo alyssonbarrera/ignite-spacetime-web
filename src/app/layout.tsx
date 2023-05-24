@@ -1,5 +1,6 @@
 import './globals.css'
 import 'react-toastify/dist/ReactToastify.css'
+import { ToastContainer } from 'react-toastify'
 
 import { ReactNode } from 'react'
 import { cookies } from 'next/headers'
@@ -11,7 +12,6 @@ import {
 import { Hero } from '@components/Hero'
 import { Header } from '@components/Header'
 import { Copyright } from '@components/Copyright'
-import { ToastContainer } from 'react-toastify'
 
 const roboto = Roboto({ subsets: ['latin'], variable: '--font-roboto' })
 const baiJamjuree = BaiJamjuree({

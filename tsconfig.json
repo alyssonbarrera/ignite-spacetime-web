@@ -27,6 +27,9 @@
       "@components/*": [
         "./src/components/*"
       ],
+      "@contexts/*": [
+        "./src/contexts/*"
+      ],
       "@app/*": [
         "./src/app/*"
       ],
@@ -35,6 +38,9 @@
       ],
       "@utils/*": [
         "./src/utils/*"
+      ],
+      "@hooks/*": [
+        "./src/hooks/*"
       ],
       "@lib/*": [
         "./src/lib/*"

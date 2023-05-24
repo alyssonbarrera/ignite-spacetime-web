@@ -1,5 +1,5 @@
-import { Profile } from '@components/Profile'
 import { SignIn } from '@components/SignIn'
+import { Profile } from '@components/Profile'
 
 type HeaderProps = {
   isAuthenticated: boolean

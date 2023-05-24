@@ -11,15 +11,19 @@ export async function GET(request: NextRequest) {
     code,
   })
 
-  const { token } = registerResponse.data
+  const { token, refreshToken } = registerResponse.data
 
   const redirectURL = redirectTo ?? new URL('/', request.url) // TODO: Change this to the URL you want to redirect to after login
 
-  const cookieExpiresInSeconds = 60 * 60 * 24 * 30 // 30 days
+  const tokenExpiresInSeconds = 60 * 60 * 24 * 3 // 3 days
+  const refreshTokenExpiresInSeconds = 60 * 60 * 24 * 7 // 7 dias
 
   return NextResponse.redirect(redirectURL, {
     headers: {
-      'Set-Cookie': `token=${token}; Path=/; max-age=${cookieExpiresInSeconds}`,
+      'Set-Cookie': [
+        `token=${token}; Max-Age=${tokenExpiresInSeconds}; Path=/; SameSite=Strict`,
+        `refreshToken=${refreshToken}; Max-Age=${refreshTokenExpiresInSeconds}; Path=/; SameSite=Strict`,
+      ].join(', '),
     },
   })
 }

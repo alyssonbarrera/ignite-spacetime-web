@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react'
 
 import { renderToast } from '@utils/toast'
 import { BeatLoader } from 'react-spinners'
+import { AppError } from '@utils/errors/AppError'
 import { EmptyMemories } from '@components/EmptyMemories'
 
 dayjs.locale(ptBr)
@@ -38,9 +39,14 @@ export default function Home() {
 
       setMemories(response.data.memories)
     } catch (error) {
+      const isAppError = error instanceof AppError
+      const errorMessage = isAppError
+        ? error.message
+        : 'Ocorreu um erro ao buscar suas memórias.'
+
       renderToast({
         type: 'error',
-        message: 'Ocorreu um erro ao buscar suas memórias.',
+        message: errorMessage,
       })
     } finally {
       setIsFetching(false)
