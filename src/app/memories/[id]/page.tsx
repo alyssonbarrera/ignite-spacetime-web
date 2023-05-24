@@ -7,11 +7,12 @@ import Cookie from 'js-cookie'
 import { useEffect, useState } from 'react'
 import { BeatLoader } from 'react-spinners'
 import { useRouter } from 'next/navigation'
-import { ChevronLeft, FileKey, X } from 'lucide-react'
+import { ChevronLeft, X } from 'lucide-react'
 
 import { api } from '@lib/api'
 import { Button } from '@components/Button'
 import { MemoryForm } from '@components/MemoryForm'
+import { ExpandedMemory } from '@components/ExpandedMemory'
 
 import { renderToast } from '@utils/toast'
 import { AppError } from '@utils/errors/AppError'
@@ -134,43 +135,16 @@ export default function Memory({ params }: MemoryProps) {
   if (memory) {
     return (
       <div className="flex max-w-[1200px] flex-1 flex-col space-y-4 p-8">
-        <div className="space-y-4">
-          <Link
-            href="/"
-            className="flex items-center gap-1 text-sm text-gray-200 hover:text-gray-100"
-          >
-            <ChevronLeft className="h-4 w-4 " />
-            voltar à home
-          </Link>
-          <div>
-            <span className="flex cursor-pointer items-center gap-1.5 text-sm text-gray-200 hover:text-gray-100">
-              <FileKey className="h-4 w-4" />
-              {memory?.isPublic ? 'Memória pública' : 'Memória privada'}
-            </span>
-          </div>
-        </div>
-        <div className="flex flex-col space-y-4">
-          <div>
-            {memory?.coverUrl.split('.').pop() === 'mp4' ? (
-              <video
-                className="aspect-video w-full rounded-lg object-cover"
-                controls
-              >
-                <source src={memory?.coverUrl} type="video/mp4" />
-              </video>
-            ) : (
-              <img
-                src={memory?.coverUrl}
-                alt="Memory cover"
-                className="rounded-lg object-cover"
-              />
-            )}
-          </div>
+        <Link
+          href="/"
+          className="flex items-center gap-1 text-sm text-gray-200 hover:text-gray-100"
+        >
+          <ChevronLeft className="h-4 w-4 " />
+          voltar à home
+        </Link>
 
-          <p className="whitespace-pre-wrap text-lg leading-relaxed text-gray-100">
-            {memory?.content}
-          </p>
-        </div>
+        <ExpandedMemory memory={memory} />
+
         <div className="flex gap-4 self-end">
           <Button onClick={() => setIsEditing(true)}>Editar</Button>
           <Button

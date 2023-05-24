@@ -5,7 +5,7 @@ export function middleware(request: NextRequest) {
 
   const redirectURL = new URL('/', request.url)
 
-  if (!token) {
+  if (!token && !request.nextUrl.pathname.includes('/memories/public')) {
     return NextResponse.redirect(redirectURL)
   }
 

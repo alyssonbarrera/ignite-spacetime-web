@@ -2,9 +2,9 @@ import { SignIn } from '@components/SignIn'
 import { Profile } from '@components/Profile'
 
 type HeaderProps = {
-  isAuthenticated: boolean
+  token: string | undefined
 }
 
-export function Header({ isAuthenticated }: HeaderProps) {
-  return isAuthenticated ? <Profile /> : <SignIn />
+export function Header({ token }: HeaderProps) {
+  return token ? <Profile token={token} /> : <SignIn />
 }

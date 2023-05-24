@@ -27,7 +27,7 @@ export const metadata = {
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  const isAuthenticated = cookies().has('token')
+  const token = cookies().get('token')?.value
 
   return (
     <html lang="pt-br">
@@ -36,17 +36,17 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       >
         <main className="grid min-h-screen grid-cols-1 lg:grid-cols-2">
           {/* Left */}
-          <div className="relative flex min-h-screen flex-col items-start justify-between overflow-hidden border-r border-white/10 bg-[url(../assets/bg-stars.svg)] bg-cover px-8 py-16 md:px-28">
+          <div className="relative flex min-h-screen flex-col items-start justify-between overflow-x-hidden border-r border-white/10 bg-[url(../assets/bg-stars.svg)] bg-cover px-8 py-16 md:px-28 lg:overflow-hidden">
             {/* Blur */}
             <div className="absolute right-0 top-1/2 h-[288px] w-[526px] -translate-y-1/2 translate-x-1/2 rounded-full bg-purple-700 opacity-50 blur-full" />
             {/* Stripes */}
             <div className="absolute bottom-0 right-2 top-0 w-2 bg-stripes " />
-            <Header isAuthenticated={isAuthenticated} />
+            <Header token={token} />
             <Hero />
             <Copyright />
           </div>
           {/* Right */}
-          <div className="flex max-h-screen min-h-screen flex-col overflow-y-scroll bg-[url(../assets/bg-stars.svg)] bg-cover ">
+          <div className="flex max-h-screen min-h-screen flex-col bg-[url(../assets/bg-stars.svg)] bg-cover lg:overflow-y-scroll ">
             {children}
           </div>
           <ToastContainer
