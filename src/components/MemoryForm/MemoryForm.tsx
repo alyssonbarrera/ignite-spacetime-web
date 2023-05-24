@@ -86,9 +86,7 @@ export function MemoryForm({ type, data }: MemoryFormProps) {
       try {
         let coverUrl: string | undefined
         try {
-          coverUrl = file
-            ? (await upload(file)).coverUrl
-            : { coverUrl: undefined }
+          coverUrl = file ? (await upload(file)).coverUrl : undefined
         } catch (error) {}
 
         await editMemory({
